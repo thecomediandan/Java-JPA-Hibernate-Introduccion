@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- el archivo persistence.xml necesariamente debe de estar en la ruta src/main/resources/META-INF -->
+<!-- xmlns="http://xmlns.jcp.org/xml/ns/persistence" Este es el espacio de nombres oficial proporcionado
+ por la especificación JPA estandar para archivos persistence.xml es decir todos los nombres de etiquetas
+  xml permitidos dentro de este archivo de configuración -->
+<!-- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi es el espacio de nombres para los atributos
+ XML Schema Instance, que se utilizan para especificar el esquema XML para validar el documento. -->
+<!-- xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+  Esto especifica la ubicación del esquema XML para validar el documento persistence.xml.
+  En este caso, http://xmlns.jcp.org/xml/ns/persistence se relaciona con el espacio de nombres que
+   mencionamos anteriormente, y http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd es la
+   ubicación del esquema XML para la versión 2.2 de la especificación JPA -->
+<!-- version="2.2" es la versión de JPA debe corresponder con el xsi:schemaLocation -->
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd"
+             version="2.2">
+    <!-- transaction-type="JTA" es la configuración para que un servidor externo maneje las transacciones
+     transaction-type="RESOURCE_LOCAL" es generalmente para desarrollo en recurso local-->
+    <persistence-unit name="empresaPersistence" transaction-type="RESOURCE_LOCAL">
+        <!-- Clases de entidad -->
+        <class>com.ardadev.domain.entities.Usuario</class>
+        <class>com.ardadev.domain.entities.Cargo</class>
+        <class>com.ardadev.domain.entities.Ciudad</class>
+        <class>com.ardadev.domain.entities.TipoDocumento</class>
+        <class>com.ardadev.domain.entities.UsuariosHasRoles</class>
+        <class>com.ardadev.domain.entities.Departamento</class>
+        <class>com.ardadev.domain.entities.Pais</class>
+        <class>com.ardadev.domain.entities.Rol</class>
+        <class>com.ardadev.domain.entities.UsuariosHasRolesPK</class>
+        <class>com.ardadev.domain.entities.DetalleNomina</class>
+        <class>com.ardadev.domain.entities.Nomina</class>
+        <!-- Proveedor de persistencia (Hibernate) -->
+        <!-- <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+         Lo comentamos porque estamos usando notaciones directas de JPA y no de Hibernate-->
+
+        <!-- Configuración de la fuente de datos (DataSource) -->
+        <properties>
+            <!-- URL de la base de datos -->
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            
+            <!-- URL de la base de datos -->
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/empresa"/>
+
+            <!-- Usuario y contraseña de la base de datos -->
+            <property name="javax.persistence.jdbc.user" value="daniel"/>
+            <property name="javax.persistence.jdbc.password" value="bender868"/>
+
+            <!-- Configuración de Hibernate -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/> <!-- Este es el motor que se va utilizar -->
+            <property name="hibernate.hbm2ddl.auto" value="update"/> <!-- Opciones: create, create-drop, update, validate, none -->
+            <property name="hibernate.show_sql" value="true"/> <!-- Mostrar sentencias SQL en la consola -->
+            <property name="hibernate.format_sql" value="true"/> <!-- Mostrar sentencias SQL en la consola de manera formateada -->
+        </properties>
+    </persistence-unit>
+</persistence>

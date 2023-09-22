@@ -10,4 +10,6 @@ public interface PaisGateway {
     void eliminar(Pais pais);
     Pais encontrarPorId(Integer id);
     List<Pais> encontrarTodos();
+    Pais encontrarPorNombre(String nombre);
+    String encontrarNombrePorId(Integer id);
 }

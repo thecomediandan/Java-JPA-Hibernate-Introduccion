@@ -5,7 +5,6 @@ import com.ardadev.domain.entities.gateways.PaisGateway;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Locale;
 
 public class PaisDao implements PaisGateway {
 
@@ -17,7 +16,7 @@ public class PaisDao implements PaisGateway {
     @Override
     public void guardar(Pais pais) {
         // em.merge(nuevoPais); para actualizar
-        em.persist(pais);
+        em.persist((Pais)pais);
     }
 
     @Override

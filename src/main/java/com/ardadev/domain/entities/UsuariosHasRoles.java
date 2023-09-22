@@ -8,23 +8,34 @@ import java.util.Objects;
 @Table(name = "usuarios_has_roles")
 public class UsuariosHasRoles {
     @EmbeddedId
+    //@AttributeOverrides()
     protected UsuariosHasRolesPK usuariosHasRolesPK;
 
     @Basic(optional = false)
     @Column(name = "activo", nullable = false)
-    private Byte activo;
+    @Enumerated(EnumType.ORDINAL)
+    private Activo activo;
 
-    @Basic(optional = false)
-    @ManyToOne(optional = false)
+    //@Basic(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "usuarios_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     private Usuario usuario;
 
-    @Basic(optional = false)
-    @ManyToOne(optional = false)
+    //@Basic(optional = false)
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "roles_id", referencedColumnName = "id", nullable = false, insertable = false, updatable = false)
     private Rol rol;
 
-    public UsuariosHasRoles() {}
+    public UsuariosHasRoles() {
+        this.usuariosHasRolesPK = new UsuariosHasRolesPK();
+    }
+
+    public UsuariosHasRoles(Activo activo) {
+        //this.usuariosHasRolesPK = new UsuariosHasRolesPK(usuario, rol);
+        //this.usuario = usuario;
+        //this.rol = rol;
+        this.activo = activo;
+    }
 
     public UsuariosHasRolesPK getUsuariosHasRolesPK() {
         return usuariosHasRolesPK;
@@ -46,12 +57,16 @@ public class UsuariosHasRoles {
         this.usuario = usuario;
     }
 
-    public Byte getActivo() {
+    public Activo getActivo() {
         return activo;
     }
 
-    public void setActivo(Byte activo) {
+    public void setActivo(Activo activo) {
         this.activo = activo;
+    }
+
+    public void setUsuariosHasRolesPK(UsuariosHasRolesPK usuariosHasRolesPK) {
+        this.usuariosHasRolesPK = usuariosHasRolesPK;
     }
 
     @Override
@@ -70,10 +85,9 @@ public class UsuariosHasRoles {
     @Override
     public String toString() {
         return "UsuariosHasRoles{" +
-                "usuariosHasRolesPK=" + usuariosHasRolesPK +
-                ", activo=" + activo +
-                ", usuario=" + usuario +
-                ", rol=" + rol +
+                "usuarios_id=" + usuariosHasRolesPK.getUsuarioId() +
+                "roles_id=" + usuariosHasRolesPK.getRolId() +
+                ", activo=" + activo.name() +
                 '}';
     }
 }

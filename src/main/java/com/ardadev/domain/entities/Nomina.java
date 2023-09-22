@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,11 +22,21 @@ public class Nomina {
     @Column(name = "mes", nullable = false)
     private Integer mes;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "nomina", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetalleNomina> detalleNominaList;
 
     public Nomina() {}
+    public Nomina(String descripcion, Integer mes) {
+        this.descripcion = descripcion;
+        this.mes = mes;
+        this.detalleNominaList = new ArrayList<>();
+    }
+
+    public void addDetalleNominaList(DetalleNomina detalleNomina) {
+        detalleNomina.setNomina(this);
+        this.detalleNominaList.add(detalleNomina);
+    }
 
     public Integer getId() {
         return id;
@@ -78,7 +89,6 @@ public class Nomina {
                 "id=" + id +
                 ", descripcion='" + descripcion + '\'' +
                 ", mes=" + mes +
-                ", detalleNominaList=" + detalleNominaList +
                 '}';
     }
 }

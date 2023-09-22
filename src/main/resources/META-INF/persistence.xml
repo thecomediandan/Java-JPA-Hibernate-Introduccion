@@ -47,10 +47,13 @@
             <property name="javax.persistence.jdbc.password" value="bender868"/>
 
             <!-- Configuración de Hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/> <!-- Este es el motor que se va utilizar -->
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>  Este es el motor que se va utilizar -->
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/> -->
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MariaDBDialect" />
             <property name="hibernate.hbm2ddl.auto" value="update"/> <!-- Opciones: create, create-drop, update, validate, none -->
             <property name="hibernate.show_sql" value="true"/> <!-- Mostrar sentencias SQL en la consola -->
             <property name="hibernate.format_sql" value="true"/> <!-- Mostrar sentencias SQL en la consola de manera formateada -->
+            <property name="hibernate.storage_engine" value="MyISAM"/><!--  Si estamos usando MariaDB debemos utilizar esta configuracion del motor, suele ocurrir un error cuando usamos create-drop -->
         </properties>
     </persistence-unit>
 </persistence>

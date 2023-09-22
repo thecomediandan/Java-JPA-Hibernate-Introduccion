@@ -1,15 +1,14 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "usuarios")
 public class Usuario {
-    private enum Activo {
-        ACTIVO, NO_ACTIVO
-    }
+
     // GenerationType.IDENTITY sirve cuando configuramos autoincrement en el atributo id
     // GenerationType.AUTO sirve para jpa disponga la mejor manera de tratar el id para la generación
     // GenerationType.SEQUENCE sirve cuando la base de datos esta configurada con una secuencia para generar las id, esta se debe especificar en el atributo generator
@@ -22,9 +21,8 @@ public class Usuario {
 
     @Basic
     @Column(name = "activo", length = 4)
-    //@Enumerated(EnumType.STRING) EnumType.STRING, EnumType.ORDINAL para configurar un objeto Enum, para este caso es mejor el Ordinal por la configuracion en la base de datos
-    //private Activo activo;
-    private Byte activo;
+    @Enumerated(EnumType.ORDINAL) // EnumType.STRING, EnumType.ORDINAL para configurar un objeto Enum, para este caso es mejor el Ordinal por la configuracion en la base de datos
+    private Activo activo;
 
     @Basic(optional = false)
     @Column(name = "apellidos", length = 20, nullable = false)
@@ -55,19 +53,19 @@ public class Usuario {
     private Double sueldoBasico;
 
 
-    @Basic(optional = false)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "cargo_id", referencedColumnName = "id", nullable = false)
+    //@Basic(optional = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "cargo_id", referencedColumnName = "id", nullable = true)
     private Cargo cargoId;
 
-    @Basic(optional = false)
+    //@Basic(optional = false)
     @ManyToOne(optional = true)
-    @JoinColumn(name = "ciudades_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "ciudades_id", nullable = true, referencedColumnName = "id")
     private Ciudad ciudadesId;
 
-    @Basic(optional = false)
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "tipos_documento_id", nullable = false, referencedColumnName = "id")
+    //@Basic(optional = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "tipos_documento_id", nullable = true, referencedColumnName = "id")
     private TipoDocumento tipoDocumentoId;
 
     @Basic
@@ -78,26 +76,21 @@ public class Usuario {
     // @Transient usado por jpa para excluir este campo como parte de la db
     // @jakarta.json.bind.annotation.JsonbTransient exclusivo de jakarta usado para excluir la serializacion/deserializacion de este campo, las librerias de serializacion y deserializacion como gson tienen sus propias notaciones para esto
     // @Expose es usado por gson para decir que este campo es serializable si no lo tiene lo omitara
-    @Transient // con transient marcamos el campo como no considerado por jpa para operaciones de persistencia guardado, actualizado o eliminado
+    // cascade = CascadeType.ALL, CascadeType.MERGE, CascadeType.DETACH, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE
+    // CASCADE sirve para ejecutar cambios en forma de cascada, es decir que la persistencia que implique mas de un objeto o entidad será tambien ejecutada
+    // Como cuando queramos agregar una entidad que a su vez depende de otra, caso de las entidades relacionadas con una clave foránea
+    //@Transient // con transient marcamos el campo como no considerado por jpa para operaciones de persistencia guardado, actualizado o eliminado
     @OneToMany(mappedBy = "idJefeInmediato", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Usuario> empleadosConJefe;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     //@jakarta.json.bind.annotation.JsonbTransient
-    private List<UsuariosHasRoles> usuariosHasRolesList;
+    private List<UsuariosHasRoles> usuariosHasRolesList = new ArrayList<>();
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DetalleNomina> detalleNominaList;
-
-    public List<DetalleNomina> getDetalleNominaList() {
-        return detalleNominaList;
-    }
-
-    public void setDetalleNominaList(List<DetalleNomina> detalleNominaList) {
-        this.detalleNominaList = detalleNominaList;
-    }
 
     /**
      * Ejemplo de una relacion uno a uno (OneToOne)
@@ -113,6 +106,45 @@ public class Usuario {
 
     public Usuario() {}
 
+    public Usuario(
+            String nombres,
+            String apellidos,
+            String numDocumento,
+            String email,
+            String password,
+            String direccion,
+            Double sueldoBasico,
+            Activo activo) {
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.numDocumento = numDocumento;
+        this.email = email;
+        this.contrasena = password;
+        this.direccion = direccion;
+        this.sueldoBasico = sueldoBasico;
+        this.activo = activo;
+        this.empleadosConJefe = new ArrayList<>();
+        //this.usuariosHasRolesList = new ArrayList<>();
+        this.detalleNominaList = new ArrayList<>();
+    }
+
+    // Aqui trataremos el relacionamiento bidireccional OneToMany con la configuracion cascade
+    // de los campos que tienen relacion con una clave foránea
+    public void addDetalleNominaList(DetalleNomina detalleNomina) {
+        detalleNomina.setUsuario(this);
+        this.detalleNominaList.add(detalleNomina);
+    }
+
+    public void addEmpleadosConJefe(Usuario idJefeInmediato) {
+        idJefeInmediato.setIdJefeInmediato(this);
+        this.empleadosConJefe.add(idJefeInmediato);
+    }
+
+    public void addUsuariosHasRolesList(UsuariosHasRoles usuariosHasRoles) {
+        usuariosHasRoles.setUsuario(this);
+        this.usuariosHasRolesList.add(usuariosHasRoles);
+    }
+
     public Integer getId() {
         return id;
     }
@@ -121,11 +153,11 @@ public class Usuario {
         this.id = id;
     }
 
-    public Byte getActivo() {
+    public Activo getActivo() {
         return activo;
     }
 
-    public void setActivo(Byte activo) {
+    public void setActivo(Activo activo) {
         this.activo = activo;
     }
 
@@ -233,6 +265,13 @@ public class Usuario {
         this.empleadosConJefe = empleadosConJefe;
     }
 
+    public List<DetalleNomina> getDetalleNominaList() {
+        return detalleNominaList;
+    }
+
+    public void setDetalleNominaList(List<DetalleNomina> detalleNominaList) {
+        this.detalleNominaList = detalleNominaList;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -250,18 +289,14 @@ public class Usuario {
     public String toString() {
         return "Usuario{" +
                 "id=" + id +
-                ", activo=" + activo +
+                ", activo=" + activo.name() +
                 ", apellidos='" + apellidos + '\'' +
-                ", cargo_id=" + cargoId +
-                ", ciudades_id=" + ciudadesId +
                 ", direccion='" + direccion + '\'' +
                 ", email='" + email + '\'' +
-                ", id_jefe_inmediato=" + idJefeInmediato +
                 ", nombres='" + nombres + '\'' +
                 ", num_documento='" + numDocumento + '\'' +
                 ", password='" + contrasena + '\'' +
                 ", sueldo_basico=" + sueldoBasico +
-                ", tipos_documento_id=" + tipoDocumentoId +
                 '}';
     }
 }

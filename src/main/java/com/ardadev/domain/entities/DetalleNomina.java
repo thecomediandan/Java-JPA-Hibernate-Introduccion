@@ -12,11 +12,11 @@ public class DetalleNomina {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "dias_laborados", nullable = false)
     private Integer diasLaborados;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "sueldo_devengado", nullable = false)
     private Double sueldoDevengado;
 
@@ -28,11 +28,11 @@ public class DetalleNomina {
     @Column(name = "valor_horas_extras", nullable = true)
     private Double valorHorasExtras;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "descuento_salud", nullable = false)
     private Double descuentoSalud;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "descuento_pension", nullable = false)
     private Double descuentoPension;
 
@@ -44,29 +44,45 @@ public class DetalleNomina {
     @Column(name = "otros_descuentos", nullable = true)
     private Double otrosDescuentos;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "total_devengado", nullable = false)
     private Double totalDevengado;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "total_descuento", nullable = false)
     private Double totalDescuento;
 
-    @Basic(optional = false)
+    @Basic(optional = true)
     @Column(name = "neto_pagar", nullable = false)
     private Double netoPagar;
 
-    @Basic(optional = false, fetch = FetchType.LAZY)
+    @Basic(optional = true, fetch = FetchType.LAZY)
     @ManyToOne(optional = true)
-    @JoinColumn(name = "usuarios_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "usuarios_id", nullable = true, referencedColumnName = "id")
     private Usuario usuario;
 
-    @Basic(fetch = FetchType.LAZY, optional = false)
+    @Basic(fetch = FetchType.LAZY, optional = true)
     @ManyToOne(optional = true)
-    @JoinColumn(name = "nomina_id", nullable = false, referencedColumnName = "id")
+    @JoinColumn(name = "nomina_id", nullable = true, referencedColumnName = "id")
     private Nomina nomina;
 
     public DetalleNomina() {}
+    public DetalleNomina(Integer diasLaborados) {
+        this.diasLaborados = diasLaborados;
+    }
+
+    public void calcularNetoPagar() {
+        this.sueldoDevengado = this.usuario.getSueldoBasico() / 30 * diasLaborados;
+        this.auxilioTransporte = usuario.getSueldoBasico() <= (737717.0 * 2.0) ? 1000.0 * diasLaborados: 0.0;
+        this.valorHorasExtras = this.sueldoDevengado * 0.10;
+        this.totalDevengado = this.sueldoDevengado + this.auxilioTransporte + this.valorHorasExtras;
+        this.descuentoSalud = (this.totalDevengado - this.auxilioTransporte) * 0.04;
+        this.descuentoPension = (this.totalDevengado - this.auxilioTransporte) * 0.04;
+        this.otrosDescuentos = 300000.0;
+        this.descuentoFondoSolidaridad = usuario.getSueldoBasico() >= (737717.0 * 4.0) ? this.totalDevengado * 0.01: 0.0;
+        this.totalDescuento = this.descuentoSalud + this.descuentoPension + this.descuentoFondoSolidaridad + this.otrosDescuentos;
+        this.netoPagar = this.totalDevengado - this.totalDescuento;
+    }
 
     public Nomina getNomina() {
         return nomina;
@@ -208,8 +224,6 @@ public class DetalleNomina {
                 ", totalDevengado=" + totalDevengado +
                 ", totalDescuento=" + totalDescuento +
                 ", netoPagar=" + netoPagar +
-                ", usuario=" + usuario +
-                ", nomina=" + nomina +
                 '}';
     }
 }

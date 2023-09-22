@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,16 +18,25 @@ public class Ciudad {
     @Column(name = "nombre", length = 60, nullable = false)
     private String nombre;
 
-    @Basic(optional = false)
+    //@Basic(optional = false)
     @ManyToOne(optional = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "departamentos_id", referencedColumnName = "id", nullable = false)
     private Departamento departamento;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "ciudadesId", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Usuario> usuarioList;
 
     public Ciudad() {}
+    public Ciudad(String nombre) {
+        this.nombre = nombre;
+        this.usuarioList = new ArrayList<>();
+    }
+
+    public void addUsuarioList(Usuario usuario) {
+        usuario.setCiudadesId(this);
+        this.usuarioList.add(usuario);
+    }
 
     public Departamento getDepartamento() {
         return departamento;
@@ -78,8 +88,6 @@ public class Ciudad {
         return "Ciudad{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", departamento=" + departamento +
-                ", usuarioList=" + usuarioList +
                 '}';
     }
 }

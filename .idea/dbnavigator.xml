@@ -15,7 +15,7 @@
     <connection id="24f3ac87-ef72-4506-b51b-0e29c51911a0">
       <console name="ConnectionEmpresaDB" type="STANDARD" schema="empresa" session="Main"><![CDATA[delete from usuarios_has_roles;
 
-select * from departamentos;
+select * from detalle_nomina;
 
 ALTER TABLE usuarios_has_roles MODIFY COLUMN id INT AUTO_INCREMENT;
 ALTER TABLE usuarios_has_roles AUTO_INCREMENT = 1;]]></console>

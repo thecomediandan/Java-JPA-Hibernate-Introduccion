@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,15 +14,24 @@ public class Rol {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Basic(optional = false)
-    @Column(name = "descripcion", nullable = false, length = 40)
+    @Basic(optional = true)
+    @Column(name = "descripcion", nullable = true, length = 40)
     private String descripcion;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "rol", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UsuariosHasRoles> usuariosHasRolesList;
+    private List<UsuariosHasRoles> usuariosHasRolesList = new ArrayList<>();
 
     public Rol() {}
+    public Rol(String descripcion) {
+        this.descripcion = descripcion;
+        //this.usuariosHasRolesList = new ArrayList<>();
+    }
+
+    public void addUsuariosHasRolesList(UsuariosHasRoles usuariosHasRoles) {
+        usuariosHasRoles.setRol(this);
+        this.usuariosHasRolesList.add(usuariosHasRoles);
+    }
 
     public Integer getId() {
         return id;
@@ -65,7 +75,6 @@ public class Rol {
         return "Rol{" +
                 "id=" + id +
                 ", descripcion='" + descripcion + '\'' +
-                ", usuariosHasRolesList=" + usuariosHasRolesList +
                 '}';
     }
 }

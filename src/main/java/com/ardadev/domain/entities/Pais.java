@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,14 +18,20 @@ public class Pais {
     @Column(name = "nombre", nullable = false, length = 60)
     private String nombre;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Departamento> departamentoList;
 
     public Pais() {}
 
+    public void addDepartamentoList(Departamento departamento) {
+        departamento.setPais(this);
+        this.departamentoList.add(departamento);
+    }
+
     public Pais(String nombre) {
         this.nombre = nombre;
+        this.departamentoList = new ArrayList<>();
     }
 
     public Integer getId() {
@@ -69,7 +76,6 @@ public class Pais {
         return "Pais{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", departamentoList=" + departamentoList +
                 '}';
     }
 }

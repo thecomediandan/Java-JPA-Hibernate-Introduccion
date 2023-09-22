@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,11 +18,20 @@ public class TipoDocumento {
     @Column(name = "descripcion", nullable = true, length = 45)
     private String descripcion;
 
-    @Transient
+    //@Transient
     @OneToMany(mappedBy = "tipoDocumentoId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Usuario> usuarioList;
 
     public TipoDocumento() {}
+    public TipoDocumento(String descripcion) {
+        this.descripcion = descripcion;
+        this.usuarioList = new ArrayList<>();
+    }
+
+    public void addUsuarioList(Usuario usuario) {
+        usuario.setTipoDocumentoId(this);
+        this.usuarioList.add(usuario);
+    }
 
     public Integer getId() {
         return id;
@@ -65,7 +75,6 @@ public class TipoDocumento {
         return "TipoDocumento{" +
                 "id=" + id +
                 ", descripcion='" + descripcion + '\'' +
-                ", usuarioList=" + usuarioList +
                 '}';
     }
 }

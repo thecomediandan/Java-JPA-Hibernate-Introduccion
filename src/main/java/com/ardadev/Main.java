@@ -1,12 +1,16 @@
 package com.ardadev;
 
 import com.ardadev.domain.entities.Departamento;
+import com.ardadev.infrastructure.driven_adapter.dao.DepartamentoDao;
 import com.ardadev.infrastructure.driven_adapter.dao.PaisDao;
 import com.ardadev.infrastructure.helper.JPAUtils;
 import com.ardadev.domain.entities.Pais;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+
+// Dependendiendo que se busque puedes modificar el archivo persistence para actualizar la base de datos
+// o crearla de nuevo modificando update/create-drop en <property name="hibernate.hbm2ddl.auto" value="update"/>
 
 // JPA es una especificación pero tiene sus implementaciones
 // con Hibernate, EclipseLink, OpenJPA, etc
@@ -32,17 +36,18 @@ public class Main {
         //departamento.setNombre("Potosi");
 
         EntityManager em = JPAUtils.getEntityManager();
-        PaisDao paisDao = new PaisDao(em);
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
+        DepartamentoDao departamentoDao = new DepartamentoDao(em);
+        //EntityTransaction tx = em.getTransaction();
+        //tx.begin();
         // Con persist estamos en estado managed
-        System.out.println(paisDao.encontrarNombrePorId(1));
+        System.out.println(departamentoDao.encontrarPorId(1));
+        System.out.println(departamentoDao.encontrarTodos());
         //Manera de agregar un departamento y asignarle la clave foranea de Pais
         //departamento.setPais(paisDao.encontrarPorId(1));
         //em.persist(departamento);
-        tx.commit(); // Con commit, flush, find, query accedemos cambios a la base de datos
-        em.flush(); // Con flush sincronizamos la base de datos
-        em.close(); //  cerramos la conexion con la base de datos, ademas volvemos a pasar a estado transient
+        //tx.commit(); // Con commit, flush, find, query accedemos cambios a la base de datos
+        //em.flush(); // Con flush sincronizamos la base de datos
+        //em.close(); //  cerramos la conexion con la base de datos, ademas volvemos a pasar a estado transient
         // tambien pasamos a estado transient coin clear, detach para desacoplar la entidad
     }
 

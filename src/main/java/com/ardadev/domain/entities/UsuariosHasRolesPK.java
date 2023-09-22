@@ -1,9 +1,6 @@
 package com.ardadev.domain.entities;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -12,15 +9,28 @@ public class UsuariosHasRolesPK implements Serializable {
     @Transient
     private static final long serialVersionUID = 5299687226859963380L;
 
-    @Basic(optional = false)
+    //@Basic(optional = false)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "usuarios_id")
     private Integer usuarioId;
 
-    @Basic(optional = false)
+    //@Basic(optional = false)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "roles_id")
     private Integer rolId;
 
-    public UsuariosHasRolesPK() {}
+    public UsuariosHasRolesPK() {
+    }
+    public UsuariosHasRolesPK(Integer usuarioId, Integer rolId) {
+        this.usuarioId = usuarioId;
+        this.rolId = rolId;
+    }
+
+    /*No permitido con Hibernate porque lo genera automáticamente con el constructor vacío
+    public UsuariosHasRolesPK(Usuario usuario, Rol rol) {
+        this.usuarioId = 1;
+        this.rolId = 1;
+    }*/
 
     public Integer getUsuarioId() {
         return usuarioId;

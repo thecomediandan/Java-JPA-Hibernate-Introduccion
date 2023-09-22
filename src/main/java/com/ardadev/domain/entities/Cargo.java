@@ -1,6 +1,7 @@
 package com.ardadev.domain.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,12 +18,21 @@ public class Cargo {
     @Column(name = "descripcion", nullable = false, length = 60)
     private String descripcion;
 
-    @Transient
+    //@Transient
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cargoId", fetch = FetchType.LAZY)
     //@jakarta.json.bind.annotation.JsonbTransient
     private List<Usuario> usuariosCollection;
 
     public Cargo() {}
+    public Cargo(String descripcion) {
+        this.descripcion = descripcion;
+        this.usuariosCollection = new ArrayList<>();
+    }
+
+    public void addUsuariosCollection(Usuario usuario) {
+        usuario.setCargoId(this);
+        this.usuariosCollection.add(usuario);
+    }
 
     public Integer getId() {
         return id;
